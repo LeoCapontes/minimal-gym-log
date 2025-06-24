@@ -6,16 +6,84 @@
 //
 
 import SwiftUI
+import SwiftData
+import Foundation
 
 struct ContentView: View {
+    @Environment(\.modelContext) var modelContext
+    @Query var setblocks: [SetBlock]
+    @Query var exercises: [Exercise]
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            List {
+                ForEach(setblocks) { setblock in
+                    NavigationLink(value: setblock){
+                        VStack(alignment: .leading) {
+                            Text(setblock.exercise.name)
+                                .font(.headline)
+                            Text("\(setblock.sets[0].weight)kg x \(setblock.sets[0].reps) reps")
+                                .font(.subheadline)
+                        }
+                    }
+                }
+                .onDelete(perform: deleteSets)
+            }
+            .navigationDestination(for: SetBlock.self, destination: EditSetblockView.init)
+            .navigationTitle("GymLog")
+            .toolbar{
+                Button("Add Exercise", action: addSetBlock)
+                Button("Add Setblock Samples", action: addSetSamples)
+                Button("Add Exercise Samples", action: addExerciseSamples)
+            }
         }
-        .padding()
+    }
+    
+    func deleteSets(_ indexSet: IndexSet) {
+        for index in indexSet {
+            let exerciseSet = setblocks[index]
+            modelContext.delete(exerciseSet)
+        }
+    }
+    
+    func addExerciseSamples() {
+        modelContext.insert(Exercise(name: "Dumbbell curl"))
+        modelContext.insert(Exercise(name: "Lateral raise"))
+        modelContext.insert(Exercise(name: "Dumbbell row (unilateral)"))
+    }
+    
+    func addSetSamples() {
+        modelContext.insert(
+            SetBlock(
+                exercise: Exercise(name: "Dumbbell curl"),
+                sets: [Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
+                date: Date()
+            )
+        )
+        modelContext.insert(
+            SetBlock(
+                exercise: Exercise(name: "Lateral Raise"),
+                sets: [Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
+                date: Date()
+            )
+        )
+        modelContext.insert(
+            SetBlock(
+                exercise: Exercise(name: "Dumbbell Row"),
+                sets: [Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
+                date: Date()
+            )
+        )
+    }
+    
+    func addSetBlock() {
+        modelContext.insert(
+            SetBlock(
+                exercise: exercises.first ?? Exercise(name: "Dumbbel Curl"),
+                sets: [Set(reps: 1, weight: 1)],
+                date: Date()
+            )
+        )
     }
 }
 

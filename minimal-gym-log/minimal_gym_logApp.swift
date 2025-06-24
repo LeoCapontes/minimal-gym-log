@@ -6,12 +6,25 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct minimal_gym_logApp: App {
+    var container: ModelContainer
+    
+    init() {
+        do{
+            let config = ModelConfiguration(for: SetBlock.self, Exercise.self)
+            container = try ModelContainer(for: SetBlock.self, Exercise.self, configurations: config)
+        } catch {
+            fatalError("Failed to configure SwiftData container.")
+        }
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(container)
     }
 }
