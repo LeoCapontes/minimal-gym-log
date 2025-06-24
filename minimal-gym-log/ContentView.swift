@@ -29,7 +29,10 @@ struct ContentView: View {
                 }
                 .onDelete(perform: deleteSets)
             }
-            .navigationDestination(for: SetBlock.self, destination: EditSetblockView.init)
+            .navigationDestination(
+                for: SetBlock.self){ setblock in
+                    EditSetblockView.init(setblock: setblock, exercises: exercises)
+                }
             .navigationTitle("GymLog")
             .toolbar{
                 Button("Add Exercise", action: addSetBlock)

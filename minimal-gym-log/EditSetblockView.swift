@@ -11,21 +11,22 @@ import SwiftData
 struct EditSetblockView: View {
     @Environment(\.modelContext) var modelContext
     @Bindable var setblock: SetBlock
-    @Query(sort: \Exercise.name) private var exercises: [Exercise]
+    var exercises: [Exercise]
     @State var selectedExercise: Exercise?
     
-    init(setblock: SetBlock) {
+    init(setblock: SetBlock, exercises: [Exercise]) {
         self.setblock = setblock
         self._selectedExercise = State(
             initialValue: exercises.first ?? Exercise(name: "Dumbbell curl")
         )
+        self.exercises = exercises
     }
     
     var body: some View {
         Form(){
             DatePicker("Date", selection: $setblock.date)
             Picker(selection: $setblock.exercise, label: Text("Exercise")){
-                ForEach(exercises){ exercise in
+                ForEach(exercises, id: \.self){ exercise in
                     Text(exercise.name)
                         .tag(Optional(exercise))
                 }
@@ -76,7 +77,13 @@ struct EditSetblockView: View {
             date: Date()
         )
         
-        return EditSetblockView(setblock: mock).modelContainer(container)
+        let mockExercises = [
+            Exercise(name: "Dumbbell curl"),
+            Exercise(name: "Dumbbell lateral raise"),
+            Exercise(name: "Floor chest press")
+        ]
+        
+        return EditSetblockView(setblock: mock, exercises: mockExercises).modelContainer(container)
     } catch {
         fatalError("Preview model container failed")
     }
