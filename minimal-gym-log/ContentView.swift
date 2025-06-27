@@ -20,6 +20,10 @@ struct ContentView: View {
                 .tabItem{
                     Label("Workouts", systemImage: "figure.strengthtraining.traditional")
                 }
+            EditExercisesView()
+                .tabItem {
+                    Label("Exercises", systemImage: "dumbbell")
+                }
         }
     }
     
@@ -61,7 +65,7 @@ struct ContentView: View {
                 date: Date()
             )
         )
-        print("added")
+        print("added set block")
         do{
             try modelContext.save()
         } catch {
