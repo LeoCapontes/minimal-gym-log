@@ -16,9 +16,6 @@ struct EditSetblockView: View {
     
     init(setblock: SetBlock, exercises: [Exercise]) {
         self.setblock = setblock
-        self._selectedExercise = State(
-            initialValue: exercises.first ?? Exercise(name: "Dumbbell curl")
-        )
         self.exercises = exercises
     }
     

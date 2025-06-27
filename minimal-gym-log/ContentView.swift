@@ -15,37 +15,11 @@ struct ContentView: View {
     @Query var exercises: [Exercise]
     
     var body: some View {
-        NavigationStack {
-            List {
-                ForEach(setblocks) { setblock in
-                    NavigationLink(value: setblock){
-                        VStack(alignment: .leading) {
-                            Text(setblock.exercise.name)
-                                .font(.headline)
-                            Text("\(setblock.sets[0].weight)kg x \(setblock.sets[0].reps) reps")
-                                .font(.subheadline)
-                        }
-                    }
+        TabView{
+            WorkoutsView(addSetBlock: addSetBlock)
+                .tabItem{
+                    Label("Workouts", systemImage: "figure.strengthtraining.traditional")
                 }
-                .onDelete(perform: deleteSets)
-            }
-            .navigationDestination(
-                for: SetBlock.self){ setblock in
-                    EditSetblockView.init(setblock: setblock, exercises: exercises)
-                }
-            .navigationTitle("GymLog")
-            .toolbar{
-                Button("Add Exercise", action: addSetBlock)
-                Button("Add Setblock Samples", action: addSetSamples)
-                Button("Add Exercise Samples", action: addExerciseSamples)
-            }
-        }
-    }
-    
-    func deleteSets(_ indexSet: IndexSet) {
-        for index in indexSet {
-            let exerciseSet = setblocks[index]
-            modelContext.delete(exerciseSet)
         }
     }
     
@@ -87,6 +61,12 @@ struct ContentView: View {
                 date: Date()
             )
         )
+        print("added")
+        do{
+            try modelContext.save()
+        } catch {
+            print("couldn't save")
+        }
     }
 }
 
