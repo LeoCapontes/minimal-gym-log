@@ -24,8 +24,8 @@ struct EditExercisesView: View {
         }
     }
     
-    func addExercise(name: String) {
-        modelContext.insert(Exercise(name: name))
+    func addExercise(name: String, bodyPart: Exercise.BodyPart) {
+        modelContext.insert(Exercise(name: name, bodyPart: bodyPart))
         print("Added exercise")
         do{
             try modelContext.save()

@@ -8,13 +8,30 @@
 import SwiftData
 import Foundation
 
+extension Exercise {
+    enum BodyPart: String, CaseIterable, Codable {
+        case core = "Core"
+        case bicep = "Biceps"
+        case back = "Back"
+        case legs = "Legs"
+        case tricep = "Triceps"
+        case shoulder = "Shoulders"
+        case chest = "Chest"
+        case cardio = "Cardio"
+        case fullBody = "Full body"
+        case other = "Other"
+    }
+}
+
 @Model
 class Exercise{
     #Unique<Exercise>([\.name])
     var name: String
+    var bodyPart: BodyPart
     
-    init(name: String) {
+    init(name: String, bodyPart: BodyPart) {
         self.name = name
+        self.bodyPart = bodyPart
     }
 }
 
@@ -39,28 +56,6 @@ class Set{
         self.note = ""
     }
 }
-
-//// stored arrays of structs become binary blobs when persisted, they need to be re-parsed when
-//// using predicates etc. This is for arrays of Set
-//final class SetTransformer : ValueTransformer {
-//    override class func transformedValueClass() -> AnyClass {
-//        return NSData.self
-//    }
-//    
-//    override class func allowsReverseTransformation() -> Bool {
-//        return true
-//    }
-//    
-//    override func transformedValue(_ value: Any?) -> Any? {
-//        guard let arr = value as? [Set] else { return nil }
-//        return try? JSONEncoder().encode(arr)
-//    }
-//    
-//    override func reverseTransformedValue(_ value: Any?) -> Any? {
-//        guard let data = value as? Data else { return false }
-//        return try? JSONDecoder().decode([Set].self, from: data)
-//    }
-//}
 
 @Model
 class SetBlock {

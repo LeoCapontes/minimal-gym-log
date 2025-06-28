@@ -61,27 +61,27 @@ struct EditSetblockView: View {
     }
 }
 
-#Preview {
-    do{
-        var container: ModelContainer
-        
-        let config = ModelConfiguration(for: SetBlock.self, Exercise.self, isStoredInMemoryOnly: true)
-        container = try ModelContainer(for: SetBlock.self, Exercise.self, configurations: config)
-        
-        let mock = SetBlock(
-            exercise: Exercise(name: "Dumbbell curl"),
-            sets: [Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
-            date: Date()
-        )
-        
-        let mockExercises = [
-            Exercise(name: "Dumbbell curl"),
-            Exercise(name: "Dumbbell lateral raise"),
-            Exercise(name: "Floor chest press")
-        ]
-        
-        return EditSetblockView(setblock: mock, exercises: mockExercises).modelContainer(container)
-    } catch {
-        fatalError("Preview model container failed")
-    }
-}
+//#Preview {
+//    do{
+//        var container: ModelContainer
+//        
+//        let config = ModelConfiguration(for: SetBlock.self, Exercise.self, isStoredInMemoryOnly: true)
+//        container = try ModelContainer(for: SetBlock.self, Exercise.self, configurations: config)
+//        
+//        let mock = SetBlock(
+//            exercise: Exercise(name: "Dumbbell curl"),
+//            sets: [Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
+//            date: Date()
+//        )
+//        
+//        let mockExercises = [
+//            Exercise(name: "Dumbbell curl", bodyPart: .bicep),
+//            Exercise(name: "Dumbbell lateral raise", bodyPart: .shoulder),
+//            Exercise(name: "Floor chest press", bodyPart: .chest)
+//        ]
+//        
+//        return EditSetblockView(setblock: mock, exercises: mockExercises).modelContainer(container)
+//    } catch {
+//        fatalError("Preview model container failed")
+//    }
+//}

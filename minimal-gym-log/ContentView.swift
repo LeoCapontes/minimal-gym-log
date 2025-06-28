@@ -28,29 +28,29 @@ struct ContentView: View {
     }
     
     func addExerciseSamples() {
-        modelContext.insert(Exercise(name: "Dumbbell curl"))
-        modelContext.insert(Exercise(name: "Lateral raise"))
-        modelContext.insert(Exercise(name: "Dumbbell row (unilateral)"))
+        modelContext.insert(Exercise(name: "Dumbbell curl", bodyPart: .bicep))
+        modelContext.insert(Exercise(name: "Dumbbell lateral raise", bodyPart: .shoulder))
+        modelContext.insert(Exercise(name: "Floor chest press", bodyPart: .chest))
     }
     
     func addSetSamples() {
         modelContext.insert(
             SetBlock(
-                exercise: Exercise(name: "Dumbbell curl"),
+                exercise: Exercise(name: "Dumbbell curl", bodyPart: .bicep),
                 sets: [Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
                 date: Date()
             )
         )
         modelContext.insert(
             SetBlock(
-                exercise: Exercise(name: "Lateral Raise"),
+                exercise: Exercise(name: "Lateral Raise", bodyPart: .shoulder),
                 sets: [Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
                 date: Date()
             )
         )
         modelContext.insert(
             SetBlock(
-                exercise: Exercise(name: "Dumbbell Row"),
+                exercise: Exercise(name: "Dumbbell Row", bodyPart: .chest),
                 sets: [Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
                 date: Date()
             )
@@ -60,7 +60,7 @@ struct ContentView: View {
     func addSetBlock() {
         modelContext.insert(
             SetBlock(
-                exercise: exercises.first ?? Exercise(name: "Dumbbel Curl"),
+                exercise: exercises.first ?? Exercise(name: "Dumbbell curl", bodyPart: .bicep),
                 sets: [Set(reps: 1, weight: 1)],
                 date: Date()
             )
