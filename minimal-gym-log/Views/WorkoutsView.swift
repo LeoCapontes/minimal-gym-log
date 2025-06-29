@@ -23,7 +23,7 @@ struct WorkoutsView: View {
                         VStack(alignment: .leading) {
                             Text(setblock.exercise.name)
                                 .font(.headline)
-                            Text("\(setblock.sets[0].weight)kg x \(setblock.sets[0].reps) reps")
+                            Text(setblock.asString())
                                 .font(.subheadline)
                         }
                     }

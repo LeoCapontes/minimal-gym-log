@@ -55,6 +55,17 @@ class Set{
         self.weight = weight
         self.note = ""
     }
+    
+    func asString() -> String {
+        var setAsString: String = ""
+        // if reps
+        if(reps != nil){
+            setAsString = "\(weight)kg for \(reps!) reps"
+        } else {
+            setAsString = "\(weight)kg for \(length!)"
+        }
+        return setAsString
+    }
 }
 
 @Model
@@ -70,5 +81,16 @@ class SetBlock {
         self.exercise = exercise
         self.sets = sets
         self.date = date
+    }
+    
+    func asString() -> String {
+        var setsAsString: String = ""
+        for (index, set) in self.sets.enumerated() {
+            if(index==0) {
+                setsAsString.append(set.asString())
+            }
+            setsAsString.append("\n\(set.asString())")
+        }
+        return setsAsString
     }
 }
