@@ -11,6 +11,7 @@ import SwiftData
 struct EditExercisesView: View {
     @Environment(\.modelContext) var modelContext
     @Query var exercises: [Exercise]
+    @State private var showingAddExerciseView = false
     
     var body: some View {
         NavigationStack{
@@ -21,6 +22,12 @@ struct EditExercisesView: View {
                 .onDelete(perform: deleteExercise)
             }
             .navigationTitle(Text("Exercises"))
+            .toolbar {
+                Button("Add Exercise", action: {showingAddExerciseView.toggle()})
+            }
+            .sheet(isPresented: $showingAddExerciseView) {
+                NewExerciseView(addExercise: addExercise)
+            }
         }
     }
     
@@ -39,5 +46,32 @@ struct EditExercisesView: View {
             let exercise = exercises[index]
             modelContext.delete(exercise)
         }
+    }
+}
+
+struct NewExerciseView: View {
+    @Environment(\.dismiss) var dismiss
+    var addExercise: (String, Exercise.BodyPart) -> Void
+    @State var name: String = ""
+    @State var bodyPart: Exercise.BodyPart = .other
+    
+    var body: some View {
+        Form {
+            Section("Name"){
+                TextField("Enter exercise name", text: $name)
+            }
+            Section("Body part") {
+                Picker("Body part", selection: $bodyPart){
+                    ForEach (Exercise.BodyPart.allCases, id: \.self) { bodyPart in
+                        Text(bodyPart.rawValue)
+                            .tag(bodyPart)
+                    }
+                }
+            }
+        }
+        Button("Add Exercise", action: {
+            addExercise(name, bodyPart)
+            dismiss()
+        })
     }
 }

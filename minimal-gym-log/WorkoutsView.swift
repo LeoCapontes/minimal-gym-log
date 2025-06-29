@@ -36,7 +36,7 @@ struct WorkoutsView: View {
                 }
             .navigationTitle("GymLog")
             .toolbar{
-                Button("Add Exercise", action: addSetBlock)
+                Button("Add Sets", action: addSetBlock)
             }
         }
     }
