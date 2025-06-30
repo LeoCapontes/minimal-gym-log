@@ -60,9 +60,9 @@ class Set{
         var setAsString: String = ""
         // if reps
         if(reps != nil){
-            setAsString = "\(weight)kg for \(reps!) reps"
+            setAsString = "\(weight)kg for \(reps ?? 0) reps"
         } else {
-            setAsString = "\(weight)kg for \(length!)"
+            setAsString = "\(weight)kg for \(length ?? 0)"
         }
         return setAsString
     }
