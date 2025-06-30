@@ -12,14 +12,20 @@ struct EditExercisesView: View {
     @Environment(\.modelContext) var modelContext
     @Query var exercises: [Exercise]
     @State private var showingAddExerciseView = false
-    
+
     var body: some View {
         NavigationStack{
             List {
-                ForEach(exercises) { exercise in
-                    Text(exercise.name)
+                ForEach(Exercise.BodyPart.allCases, id :\.self){ bodyPart in
+                    Section(bodyPart.rawValue) {
+                        ForEach(exerciseByPart(part: bodyPart), id: \.self) { exercise in
+                            if (exercise.bodyPart == bodyPart){
+                                Text(exercise.name)
+                            }
+                        }
+                        .onDelete(perform: deleteExercise)
+                    }
                 }
-                .onDelete(perform: deleteExercise)
             }
             .navigationTitle(Text("Exercises"))
             .toolbar {
@@ -29,6 +35,11 @@ struct EditExercisesView: View {
                 NewExerciseView(addExercise: addExercise)
             }
         }
+    }
+    
+    func exerciseByPart(part: Exercise.BodyPart) -> [Exercise] {
+        let byPart = exercises.filter { $0.bodyPart == part}
+        return byPart
     }
     
     func addExercise(name: String, bodyPart: Exercise.BodyPart) {
