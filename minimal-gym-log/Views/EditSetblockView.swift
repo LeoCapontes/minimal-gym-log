@@ -46,7 +46,7 @@ struct EditSetblockView: View {
                                 format: .number,
                                 prompt: Text("Weight(kg)")
                             )
-                            .keyboardType(.numberPad)
+                            .keyboardType(.decimalPad)
                         }
                     }
                 }
