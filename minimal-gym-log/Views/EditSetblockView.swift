@@ -33,20 +33,26 @@ struct EditSetblockView: View {
                 List{
                     ForEach($setblock.sets) { set in
                         HStack{
+                            Text("Reps:")
                             TextField(
                                 "Enter Repetitions",
                                 value: set.reps,
                                 format: .number,
                                 prompt: Text("Reps")
                             )
+                            .textFieldStyle(.roundedBorder)
                             .keyboardType(.numberPad)
+                            Spacer()
+                            Text("Weight:")
                             TextField(
                                 "Enter Weight (kg)",
                                 value: set.weight,
                                 format: .number,
                                 prompt: Text("Weight(kg)")
                             )
+                            .textFieldStyle(.roundedBorder)
                             .keyboardType(.decimalPad)
+                            Text("kg")
                         }
                     }
                 }
