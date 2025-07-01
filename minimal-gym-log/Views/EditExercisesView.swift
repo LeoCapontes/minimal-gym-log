@@ -42,8 +42,8 @@ struct EditExercisesView: View {
         return byPart
     }
     
-    func addExercise(name: String, bodyPart: Exercise.BodyPart) {
-        modelContext.insert(Exercise(name: name, bodyPart: bodyPart))
+    func addExercise(name: String, bodyPart: Exercise.BodyPart, isBodyweight: Bool) {
+        modelContext.insert(Exercise(name: name, bodyPart: bodyPart, isBodyWeight: isBodyweight))
         print("Added exercise")
         do{
             try modelContext.save()
@@ -62,9 +62,10 @@ struct EditExercisesView: View {
 
 struct NewExerciseView: View {
     @Environment(\.dismiss) var dismiss
-    var addExercise: (String, Exercise.BodyPart) -> Void
+    var addExercise: (String, Exercise.BodyPart, Bool) -> Void
     @State var name: String = ""
     @State var bodyPart: Exercise.BodyPart = .other
+    @State var isBodyWeight: Bool = false
     
     var body: some View {
         Form {
@@ -79,9 +80,12 @@ struct NewExerciseView: View {
                     }
                 }
             }
+            Section("Options"){
+                Toggle("Is this a bodyweight exercise?", isOn: $isBodyWeight)
+            }
         }
         Button("Add Exercise", action: {
-            addExercise(name, bodyPart)
+            addExercise(name, bodyPart, isBodyWeight)
             dismiss()
         })
     }

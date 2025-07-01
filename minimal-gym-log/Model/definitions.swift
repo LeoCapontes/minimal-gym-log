@@ -28,10 +28,12 @@ class Exercise{
     #Unique<Exercise>([\.name])
     var name: String
     var bodyPart: BodyPart
+    var bodyWeightExercise: Bool
     
-    init(name: String, bodyPart: BodyPart) {
+    init(name: String, bodyPart: BodyPart, isBodyWeight: Bool = false) {
         self.name = name
         self.bodyPart = bodyPart
+        self.bodyWeightExercise = isBodyWeight
     }
 }
 
