@@ -6,12 +6,23 @@
 //
 
 import Testing
+import Foundation
 @testable import minimal_gym_log
 
 struct minimal_gym_logTests {
-
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    
+    @Test func setBlockToString() {
+        let setBlock = SetBlock(
+            exercise: Exercise(name: "push ups", bodyPart: Exercise.BodyPart.chest),
+            sets: [
+                Set(reps: 12, weight: 10),
+                Set(reps: 12, weight: 10),
+                Set(reps: 10, weight: 10)
+            ],
+            date: Date()
+        )
+        
+        #expect(setBlock.asString() == "10kg for 12 reps x2\n10kg for 10 reps")
     }
 
 }

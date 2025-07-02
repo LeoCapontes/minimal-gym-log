@@ -60,11 +60,14 @@ class Set{
     
     func asString() -> String {
         var setAsString: String = ""
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 3
         // if reps
         if(reps != nil){
-            setAsString = "\(weight)kg for \(reps ?? 0) reps"
+            setAsString = "\(formatter.string(from: NSNumber(value: weight))!)kg for \(reps ?? 0) reps"
         } else {
-            setAsString = "\(weight)kg for \(length ?? 0)"
+            setAsString = "\(formatter.string(from: NSNumber(value: weight))!)kg for \(length ?? 0)"
         }
         return setAsString
     }
@@ -87,12 +90,48 @@ class SetBlock {
     
     func asString() -> String {
         var setsAsString: String = ""
+        var setRepetitions: [Int] = [Int](repeating: 0, count: self.sets.count+1)
+        var currentind: Int = 0
         for (index, set) in self.sets.enumerated() {
-            if(index==0) {
-                setsAsString.append(set.asString())
+            if(index==0){
+                setRepetitions[currentind] += 1
+                continue;
             }
-            setsAsString.append("\n\(set.asString())")
+            if (set.asString() == sets[index-1].asString()) {
+                setRepetitions[currentind] += 1
+            } else {
+                currentind += 1
+                setRepetitions[currentind] += 1
+            }
         }
-        return setsAsString
+        // check if all sets were properly counted
+        print("repetitions array: \(setRepetitions)")
+        let sumOfRepetitions = setRepetitions.reduce(0, +)
+        if( sumOfRepetitions != self.sets.count) {
+            // temporary fallback with no set grouping
+            print("doesn't add up, \(sumOfRepetitions) and sets.count is \(self.sets.count)")
+            for (index, set) in self.sets.enumerated() {
+                if(index==0) {
+                    setsAsString.append(set.asString())
+                }
+                setsAsString.append("\n\(set.asString())")
+            }
+            return setsAsString
+        }
+        else {
+            var currentSetIndex: Int = 0
+            for (_, repetitions) in setRepetitions.enumerated() {
+                if(repetitions==0){return setsAsString.trimmingCharacters(in: CharacterSet.newlines)}
+                if(repetitions==1){
+                    setsAsString.append(sets[currentSetIndex].asString())
+                }
+                else{
+                    setsAsString.append("\(sets[currentSetIndex].asString()) x\(repetitions)")
+                }
+                setsAsString.append("\n")
+                currentSetIndex+=repetitions
+            }
+            return setsAsString
+        }
     }
 }
