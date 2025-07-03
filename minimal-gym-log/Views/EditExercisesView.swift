@@ -12,18 +12,26 @@ struct EditExercisesView: View {
     @Environment(\.modelContext) var modelContext
     @Query var exercises: [Exercise]
     @State private var showingAddExerciseView = false
+    
+    var groupedByBodyPart: [Exercise.BodyPart: [Exercise]] {
+        Dictionary(grouping: exercises, by: { $0.bodyPart })
+    }
+    
+    var exerciseHeaders: [Exercise.BodyPart]{
+        groupedByBodyPart.map({$0.key})
+    }
 
     var body: some View {
         NavigationStack{
             List {
-                ForEach(Exercise.BodyPart.allCases, id :\.self){ bodyPart in
-                    Section(bodyPart.rawValue) {
-                        ForEach(exerciseByPart(part: bodyPart), id: \.self) { exercise in
-                            if (exercise.bodyPart == bodyPart){
-                                Text(exercise.name)
-                            }
+                ForEach(exerciseHeaders, id: \.self) { exerciseGroup in
+                    Section(exerciseGroup.rawValue){
+                        ForEach(groupedByBodyPart[exerciseGroup]!, id: \.self) { exercise in
+                            Text(exercise.name)
                         }
-                        .onDelete(perform: deleteExercise)
+                        .onDelete { indexSet in
+                            deleteExercise(indexSet, for: exerciseGroup)
+                        }
                     }
                 }
             }
@@ -37,11 +45,6 @@ struct EditExercisesView: View {
         }
     }
     
-    func exerciseByPart(part: Exercise.BodyPart) -> [Exercise] {
-        let byPart = exercises.filter { $0.bodyPart == part}
-        return byPart
-    }
-    
     func addExercise(name: String, bodyPart: Exercise.BodyPart, isBodyweight: Bool) {
         modelContext.insert(Exercise(name: name, bodyPart: bodyPart, isBodyWeight: isBodyweight))
         print("Added exercise")
@@ -52,10 +55,11 @@ struct EditExercisesView: View {
         }
     }
     
-    func deleteExercise(_ indexSet: IndexSet) {
+    func deleteExercise(_ indexSet: IndexSet, for bodyPart: Exercise.BodyPart) {
+        guard let exercisesForBodyPart = groupedByBodyPart[bodyPart] else { return }
         for index in indexSet {
-            let exercise = exercises[index]
-            modelContext.delete(exercise)
+            let exerciseSet = exercisesForBodyPart[index]
+            modelContext.delete(exerciseSet)
         }
     }
 }

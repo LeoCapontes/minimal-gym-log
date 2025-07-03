@@ -105,7 +105,6 @@ class SetBlock {
             }
         }
         // check if all sets were properly counted
-        print("repetitions array: \(setRepetitions)")
         let sumOfRepetitions = setRepetitions.reduce(0, +)
         if( sumOfRepetitions != self.sets.count) {
             // temporary fallback with no set grouping
