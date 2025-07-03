@@ -24,6 +24,10 @@ struct ContentView: View {
                 .tabItem {
                     Label("Exercises", systemImage: "dumbbell")
                 }
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gear")
+                }
         }
     }
     
