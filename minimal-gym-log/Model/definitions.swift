@@ -42,19 +42,19 @@ class Set{
     var reps: Int?
     var length: Int?
     
-    // metric
-    var weight: Float
+    // Kilograms
+    var weightKg: Double? = nil
     var note: String
     
-    init(reps: Int, weight: Float){
+    init(reps: Int, weight: Double){
         self.reps = reps
-        self.weight = weight
+        self.weightKg = weight
         self.note = ""
     }
     
-    init(length: Int, weight: Float){
+    init(length: Int, weight: Double){
         self.length = length
-        self.weight = weight
+        self.weightKg = weight
         self.note = ""
     }
     
@@ -64,12 +64,34 @@ class Set{
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 3
         // if reps
-        if(reps != nil){
-            setAsString = "\(formatter.string(from: NSNumber(value: weight))!)kg for \(reps ?? 0) reps"
+        if let weightToShow = weight?.value {
+            if(reps != nil){
+                setAsString = "\(formatter.string(from: NSNumber(value: weightToShow))!)kg for \(reps ?? 0) reps"
+            } else {
+                setAsString = "\(formatter.string(from: NSNumber(value: weightToShow))!)kg for \(length ?? 0)"
+            }
+            return setAsString
         } else {
-            setAsString = "\(formatter.string(from: NSNumber(value: weight))!)kg for \(length ?? 0)"
+            return "uh oh"
         }
-        return setAsString
+    }
+    
+    var weight: Measurement<UnitMass>? {
+        get {
+            if let weightKg = weightKg {
+                return Measurement<UnitMass>(value: weightKg, unit: .kilograms)
+            } else {
+                return nil
+            }
+        }
+        set {
+            if let kilograms = newValue?.converted(to: .kilograms).value {
+                weightKg = kilograms
+            } else {
+                print("Couldn't set kilos")
+                weightKg = nil
+            }
+        }
     }
 }
 

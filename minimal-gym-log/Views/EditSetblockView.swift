@@ -46,7 +46,7 @@ struct EditSetblockView: View {
                             Text("Weight:")
                             TextField(
                                 "Enter Weight (kg)",
-                                value: set.weight,
+                                value: set.weightKg,
                                 format: .number,
                                 prompt: Text("Weight(kg)")
                             )
