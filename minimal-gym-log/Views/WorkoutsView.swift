@@ -13,6 +13,7 @@ struct WorkoutsView: View {
     @Environment(\.modelContext) var modelContext
     @Query(sort: \SetBlock.date, order: .reverse) var setblocks: [SetBlock]
     @Query var exercises: [Exercise]
+    @AppStorage("MassUnitPreference")var unitPreference: MassUnits = .kilogram
     
     var groupedByDate: [Date:[SetBlock]] {
         Dictionary(grouping: setblocks, by: {Calendar.current.startOfDay(for: $0.date)})
@@ -34,7 +35,7 @@ struct WorkoutsView: View {
                                 VStack(alignment: .leading) {
                                     Text(setblock.exercise.name)
                                         .font(.headline)
-                                    Text(setblock.asString())
+                                    Text(setblock.asString(unitPreference: unitPreference))
                                         .font(.subheadline)
                                 }
                             }

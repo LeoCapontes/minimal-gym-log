@@ -27,8 +27,8 @@ struct SettingsView: View {
 }
 
 enum MassUnits: String, CaseIterable, Codable, Identifiable {
-    case kilogram = "Kilogram",
-         pound = "Pound"
+    case kilogram = "kg",
+         pound = "lb"
     
     var id: String {rawValue}
 }

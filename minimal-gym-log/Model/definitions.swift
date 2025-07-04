@@ -58,17 +58,25 @@ class Set{
         self.note = ""
     }
     
-    func asString() -> String {
+    func asString(unitPreference: MassUnits) -> String {
         var setAsString: String = ""
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 3
+        var unit: UnitMass
+        switch unitPreference {
+        case MassUnits.kilogram:
+            unit = .kilograms
+        case MassUnits.pound:
+            unit = .pounds
+        }
+        
         // if reps
-        if let weightToShow = weight?.value {
+        if let weightToShow = weight?.converted(to: unit).value {
             if(reps != nil){
-                setAsString = "\(formatter.string(from: NSNumber(value: weightToShow))!)kg for \(reps ?? 0) reps"
+                setAsString = "\(formatter.string(from: NSNumber(value: weightToShow))!)\(unitPreference.rawValue) for \(reps ?? 0) reps"
             } else {
-                setAsString = "\(formatter.string(from: NSNumber(value: weightToShow))!)kg for \(length ?? 0)"
+                setAsString = "\(formatter.string(from: NSNumber(value: weightToShow))!)\(unitPreference.rawValue) for \(length ?? 0)"
             }
             return setAsString
         } else {
@@ -110,7 +118,7 @@ class SetBlock {
         self.date = date
     }
     
-    func asString() -> String {
+    func asString(unitPreference: MassUnits) -> String {
         var setsAsString: String = ""
         var setRepetitions: [Int] = [Int](repeating: 0, count: self.sets.count+1)
         var currentind: Int = 0
@@ -119,7 +127,7 @@ class SetBlock {
                 setRepetitions[currentind] += 1
                 continue;
             }
-            if (set.asString() == sets[index-1].asString()) {
+            if (set.asString(unitPreference: unitPreference) == sets[index-1].asString(unitPreference: unitPreference)) {
                 setRepetitions[currentind] += 1
             } else {
                 currentind += 1
@@ -133,9 +141,9 @@ class SetBlock {
             print("doesn't add up, \(sumOfRepetitions) and sets.count is \(self.sets.count)")
             for (index, set) in self.sets.enumerated() {
                 if(index==0) {
-                    setsAsString.append(set.asString())
+                    setsAsString.append(set.asString(unitPreference: unitPreference))
                 }
-                setsAsString.append("\n\(set.asString())")
+                setsAsString.append("\n\(set.asString(unitPreference: unitPreference))")
             }
             return setsAsString
         }
@@ -144,10 +152,10 @@ class SetBlock {
             for (_, repetitions) in setRepetitions.enumerated() {
                 if(repetitions==0){return setsAsString.trimmingCharacters(in: CharacterSet.newlines)}
                 if(repetitions==1){
-                    setsAsString.append(sets[currentSetIndex].asString())
+                    setsAsString.append(sets[currentSetIndex].asString(unitPreference: unitPreference))
                 }
                 else{
-                    setsAsString.append("\(sets[currentSetIndex].asString()) x\(repetitions)")
+                    setsAsString.append("\(sets[currentSetIndex].asString(unitPreference: unitPreference)) x\(repetitions)")
                 }
                 setsAsString.append("\n")
                 currentSetIndex+=repetitions
