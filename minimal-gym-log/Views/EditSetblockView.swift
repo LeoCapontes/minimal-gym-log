@@ -54,6 +54,7 @@ struct EditSetblockView: View {
                         }
                         .animation(.default.speed(2.0))
                     }
+                    .onDelete(perform: deleteSets)
                 }
             }
         }
@@ -63,6 +64,12 @@ struct EditSetblockView: View {
     
     func addSet(){
         setblock.sets.append(Set(reps: 0, weight: 0))
+    }
+    
+    func deleteSets(_ indexSet: IndexSet){
+        for index in indexSet {
+            setblock.sets.remove(at: index)
+        }
     }
 }
 
