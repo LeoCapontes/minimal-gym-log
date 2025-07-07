@@ -43,7 +43,7 @@ class Set{
     var length: Int?
     
     // Kilograms
-    var weightKg: Double? = nil
+    var weightKg: Double? = 0
     var note: String
     
     init(reps: Int, weight: Double){
@@ -62,43 +62,43 @@ class Set{
         var setAsString: String = ""
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 3
-        var unit: UnitMass
-        switch unitPreference {
-        case MassUnits.kilogram:
-            unit = .kilograms
-        case MassUnits.pound:
-            unit = .pounds
-        }
+        formatter.maximumFractionDigits = 2
         
         // if reps
-        if let weightToShow = weight?.converted(to: unit).value {
-            if(reps != nil){
-                setAsString = "\(formatter.string(from: NSNumber(value: weightToShow))!)\(unitPreference.rawValue) for \(reps ?? 0) reps"
-            } else {
-                setAsString = "\(formatter.string(from: NSNumber(value: weightToShow))!)\(unitPreference.rawValue) for \(length ?? 0)"
-            }
-            return setAsString
+        let weightToShow = getWeight(as: unitPreference)
+        if(reps != nil){
+            setAsString = "\(formatter.string(from: NSNumber(value: weightToShow))!)\(unitPreference.rawValue) for \(reps ?? 0) reps"
         } else {
-            return "uh oh"
+            setAsString = "\(formatter.string(from: NSNumber(value: weightToShow))!)\(unitPreference.rawValue) for \(length ?? 0)"
+        }
+        return setAsString
+    }
+    
+    func setWeight(weight toSet: Double, as unit: MassUnits){
+        switch unit{
+        case .kilogram:
+            weightKg = toSet
+        case .pound:
+            let pounds = Measurement<UnitMass>(value: toSet, unit: .pounds)
+            weightKg = pounds.converted(to: .kilograms).value
         }
     }
     
-    var weight: Measurement<UnitMass>? {
-        get {
-            if let weightKg = weightKg {
-                return Measurement<UnitMass>(value: weightKg, unit: .kilograms)
-            } else {
-                return nil
-            }
+    func setWeight(weight toSet: String, as unit: MassUnits){
+        switch unit{
+        case .kilogram:
+            weightKg = Double(toSet)!
+        case .pound:
+            let pounds = Measurement<UnitMass>(value: Double(toSet)!, unit: .pounds)
+            weightKg = pounds.converted(to: .kilograms).value
         }
-        set {
-            if let kilograms = newValue?.converted(to: .kilograms).value {
-                weightKg = kilograms
-            } else {
-                print("Couldn't set kilos")
-                weightKg = nil
-            }
+    }
+    
+    func getWeight(as unit: MassUnits) -> Double{
+        let kg = Measurement<UnitMass>(value: weightKg!, unit: .kilograms)
+        switch unit{
+        case .kilogram: return kg.value
+        case .pound: return kg.converted(to: .pounds).value
         }
     }
 }

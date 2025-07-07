@@ -7,9 +7,11 @@
 
 import SwiftUI
 import SwiftData
+import Combine
 
 struct EditSetblockView: View {
     @Environment(\.modelContext) var modelContext
+    @AppStorage("MassUnitPreference") var massUnitPreference: MassUnits = .kilogram
     @Bindable var setblock: SetBlock
     var exercises: [Exercise]
     @State var selectedExercise: Exercise?
@@ -20,6 +22,7 @@ struct EditSetblockView: View {
     }
     
     var body: some View {
+        
         Form(){
             DatePicker("Date", selection: $setblock.date)
             Picker(selection: $setblock.exercise, label: Text("Exercise")){
@@ -31,12 +34,12 @@ struct EditSetblockView: View {
             Section("Sets") {
                 Button("Add set", action: addSet)
                 List{
-                    ForEach($setblock.sets) { set in
+                    ForEach($setblock.sets) { setBlockSet in
                         HStack{
                             Text("Reps:")
                             TextField(
                                 "Enter Repetitions",
-                                value: set.reps,
+                                value: setBlockSet.reps,
                                 format: .number,
                                 prompt: Text("Reps")
                             )
@@ -44,16 +47,12 @@ struct EditSetblockView: View {
                             .keyboardType(.numberPad)
                             Spacer()
                             Text("Weight:")
-                            TextField(
-                                "Enter Weight (kg)",
-                                value: set.weightKg,
-                                format: .number,
-                                prompt: Text("Weight(kg)")
+                            WeightEntry(
+                                set: setBlockSet,
+                                massUnitPreference: massUnitPreference
                             )
-                            .textFieldStyle(.roundedBorder)
-                            .keyboardType(.decimalPad)
-                            Text("kg")
                         }
+                        .animation(.default.speed(2.0))
                     }
                 }
             }
@@ -64,6 +63,49 @@ struct EditSetblockView: View {
     
     func addSet(){
         setblock.sets.append(Set(reps: 0, weight: 0))
+    }
+}
+
+struct WeightEntry: View {
+    @State var weightInput: String = ""
+    @Binding var set: Set
+    @FocusState var fieldFocused: Bool
+    var massUnitPreference: MassUnits
+    
+    var body: some View {
+        let weightBinding = Binding<String>(
+            get: {String($set.wrappedValue.getWeight(as: massUnitPreference))},
+            set: { newWeight in
+                $set.wrappedValue.setWeight(weight: newWeight, as: massUnitPreference)
+            }
+        )
+        HStack{
+        TextField(
+            "Enter Weight (\(massUnitPreference.rawValue))",
+            text: $weightInput
+        )
+        .textFieldStyle(.roundedBorder)
+        .keyboardType(.decimalPad)
+        .focused($fieldFocused)
+        .onReceive(Just(weightInput)) { newValue in
+            let filtered = newValue.filter { "0123456789.".contains($0) }
+            if filtered != newValue {
+                self.weightInput = filtered
+            }
+        }
+        .onAppear {
+            self.weightInput = weightBinding.wrappedValue
+        }
+        Text("\(massUnitPreference.rawValue)")}
+        .onChange(of: fieldFocused) {
+            self.weightInput = weightBinding.wrappedValue
+        }
+        if(fieldFocused) {
+            Button("", systemImage: "checkmark.circle.fill") {
+                weightBinding.wrappedValue = weightInput
+                fieldFocused = false
+            }
+        }
     }
 }
 
