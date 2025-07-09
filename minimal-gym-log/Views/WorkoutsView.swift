@@ -19,6 +19,12 @@ struct WorkoutsView: View {
         Dictionary(grouping: setblocks, by: {Calendar.current.startOfDay(for: $0.date)})
     }
     
+    var groupedByDateSorted: [Date: [SetBlock]] {
+        groupedByDate.mapValues { blocks in
+            blocks.sorted { $1.date > $0.date }
+        }
+    }
+    
     var datesHeaders: [Date]{
         groupedByDate.map({$0.key}).sorted().reversed()
     }
@@ -30,7 +36,7 @@ struct WorkoutsView: View {
             List {
                 ForEach(datesHeaders, id: \.self) { date in
                     Section(date.formatted(date: .long, time: .omitted)){
-                        ForEach(groupedByDate[date]!, id:  \.self) { setblock in
+                        ForEach(groupedByDateSorted[date]!, id:  \.self) { setblock in
                             NavigationLink(value: setblock){
                                 VStack(alignment: .leading) {
                                     Text(setblock.exercise.name)
