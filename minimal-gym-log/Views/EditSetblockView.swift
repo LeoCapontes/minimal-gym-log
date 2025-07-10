@@ -92,7 +92,17 @@ struct WeightEntry: View {
     
     var body: some View {
         let weightBinding = Binding<String>(
-            get: {String($set.wrappedValue.getWeight(as: massUnitPreference))},
+            get: {
+                let formatter = NumberFormatter()
+                formatter.numberStyle = .decimal
+                formatter.maximumFractionDigits = 2
+                return (
+                    formatter.string(
+                        from: NSNumber(value: $set.wrappedValue.getWeight(as: massUnitPreference))
+                    )
+                    ?? String($set.wrappedValue.getWeight(as: massUnitPreference))
+                )
+            },
             set: { newWeight in
                 $set.wrappedValue.setWeight(weight: newWeight, as: massUnitPreference)
             }
