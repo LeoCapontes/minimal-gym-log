@@ -22,7 +22,6 @@ struct EditSetblockView: View {
     }
     
     var body: some View {
-        
         Form(){
             DatePicker("Date", selection: $setblock.date)
             Picker(selection: $setblock.exercise, label: Text("Exercise")){
@@ -31,7 +30,10 @@ struct EditSetblockView: View {
                         .tag(Optional(exercise))
                 }
             }
-            Section("Sets") {
+            Section(
+                header: Text("Sets"),
+                footer: Text("Total volume: \(totalVolume())\(massUnitPreference.rawValue)")
+            ) {
                 Button("Add set", action: addSet)
                 List{
                     ForEach($setblock.sets) { setBlockSet in
@@ -57,6 +59,7 @@ struct EditSetblockView: View {
                     .onDelete(perform: deleteSets)
                 }
             }
+            
         }
         .navigationTitle("Edit exercise")
         .navigationBarTitleDisplayMode(.inline)
@@ -70,6 +73,14 @@ struct EditSetblockView: View {
         for index in indexSet {
             setblock.sets.remove(at: index)
         }
+    }
+    
+    func totalVolume() -> String{
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 2
+        
+        return formatter.string(from: NSNumber(value: setblock.getTotalVolume(as: massUnitPreference)))!
     }
 }
 
@@ -116,27 +127,22 @@ struct WeightEntry: View {
     }
 }
 
-//#Preview {
-//    do{
-//        var container: ModelContainer
-//        
-//        let config = ModelConfiguration(for: SetBlock.self, Exercise.self, isStoredInMemoryOnly: true)
-//        container = try ModelContainer(for: SetBlock.self, Exercise.self, configurations: config)
-//        
-//        let mock = SetBlock(
-//            exercise: Exercise(name: "Dumbbell curl"),
-//            sets: [Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
-//            date: Date()
-//        )
-//        
-//        let mockExercises = [
-//            Exercise(name: "Dumbbell curl", bodyPart: .bicep),
-//            Exercise(name: "Dumbbell lateral raise", bodyPart: .shoulder),
-//            Exercise(name: "Floor chest press", bodyPart: .chest)
-//        ]
-//        
-//        return EditSetblockView(setblock: mock, exercises: mockExercises).modelContainer(container)
-//    } catch {
-//        fatalError("Preview model container failed")
-//    }
-//}
+#Preview {
+    let config = ModelConfiguration(for: SetBlock.self, Exercise.self, isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: SetBlock.self, Exercise.self, configurations: config)
+    
+    let mock = SetBlock(
+        exercise: Exercise(name: "Dumbbell curl", bodyPart: .bicep),
+        sets: [Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
+        date: Date()
+    )
+    
+    let mockExercises = [
+        Exercise(name: "Dumbbell curl", bodyPart: .bicep),
+        Exercise(name: "Dumbbell lateral raise", bodyPart: .shoulder),
+        Exercise(name: "Floor chest press", bodyPart: .chest)
+    ]
+    
+    EditSetblockView(setblock: mock, exercises: mockExercises).modelContainer(container)
+
+}

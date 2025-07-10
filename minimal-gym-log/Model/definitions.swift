@@ -118,6 +118,19 @@ class SetBlock {
         self.date = date
     }
     
+    func getTotalVolume(as unit: MassUnits) -> Double {
+        var volumeKg: Double = 0
+        for s in self.sets {
+            volumeKg += (Double(s.reps ?? 0) * (s.weightKg ?? 0))
+        }
+        switch unit{
+        case .kilogram: return volumeKg
+        case .pound:
+            let kg = Measurement<UnitMass>(value: volumeKg, unit: .kilograms)
+            return kg.converted(to: .pounds).value
+        }
+    }
+    
     func asString(unitPreference: MassUnits) -> String {
         var setsAsString: String = ""
         var setRepetitions: [Int] = [Int](repeating: 0, count: self.sets.count+1)
