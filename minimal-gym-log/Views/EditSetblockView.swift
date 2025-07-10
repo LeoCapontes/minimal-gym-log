@@ -59,6 +59,9 @@ struct EditSetblockView: View {
                     .onDelete(perform: deleteSets)
                 }
             }
+            Section("Previous Sets") {
+                PreviousSetBlocksOverview(selectedExercise: $setblock.exercise)
+            }
             
         }
         .navigationTitle("Edit exercise")
@@ -137,22 +140,60 @@ struct WeightEntry: View {
     }
 }
 
+struct PreviousSetBlocksOverview: View {
+    @Binding var selectedExercise: Exercise
+    @Query(sort: [SortDescriptor(\SetBlock.date)]) var lastSetBlocks: [SetBlock]
+    @AppStorage("MassUnitPreference") var unitPreference: MassUnits = .kilogram
+    
+    var setBlocksOfSelectedExercise: [SetBlock] {
+        Array(lastSetBlocks.filter {$0.exercise == selectedExercise}.prefix(3))
+    }
+    var body: some View {
+        List{
+            PreviousSetsChart(setblocks: setBlocksOfSelectedExercise)
+            ForEach(setBlocksOfSelectedExercise.reversed()) { setblock in
+                HStack(alignment: .top){
+                    Text(setblock.date.formatted(date: .numeric, time: .omitted))
+                        .font(.system(size: 14))
+                    Text(setblock.asString(unitPreference: unitPreference))
+                        .font(.system(size: 12))
+                }
+            }
+        }
+    }
+}
+
 #Preview {
     let config = ModelConfiguration(for: SetBlock.self, Exercise.self, isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: SetBlock.self, Exercise.self, configurations: config)
+    let context = container.mainContext
     
-    let mock = SetBlock(
-        exercise: Exercise(name: "Dumbbell curl", bodyPart: .bicep),
-        sets: [Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
-        date: Date()
-    )
+    let mock = [
+        SetBlock(
+            exercise: Exercise(name: "Dumbbell curl", bodyPart: .bicep),
+            sets: [Set(reps: 8, weight: 9), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), ],
+            date: Date().advanced(by: -86400*2)
+        ),
+        SetBlock(
+            exercise: Exercise(name: "Dumbbell curl", bodyPart: .bicep),
+            sets: [Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
+            date: Date().advanced(by: -86400)
+        ),
+        SetBlock(
+            exercise: Exercise(name: "Dumbbell curl", bodyPart: .bicep),
+            sets: [Set(reps: 8, weight: 11), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
+            date: Date()
+        )]
     
+    for setblock in mock {
+        context.insert(setblock)
+    }
     let mockExercises = [
         Exercise(name: "Dumbbell curl", bodyPart: .bicep),
         Exercise(name: "Dumbbell lateral raise", bodyPart: .shoulder),
         Exercise(name: "Floor chest press", bodyPart: .chest)
     ]
     
-    EditSetblockView(setblock: mock, exercises: mockExercises).modelContainer(container)
+    return EditSetblockView(setblock: mock[2], exercises: mockExercises).modelContainer(container)
 
 }
