@@ -11,6 +11,10 @@ struct PreviousSetsChart: View {
     @AppStorage("MassUnitPreference") var massUnitPreference: MassUnits = .kilogram
     var setblocks: [SetBlock]
     
+    var volumes: [Double] {
+        setblocks.map {$0.getTotalVolume(as: massUnitPreference)}
+    }
+    
     var body: some View {
         VStack(alignment: .leading){
             Text("Volume (\(massUnitPreference.rawValue))")
@@ -23,6 +27,8 @@ struct PreviousSetsChart: View {
                     .symbol(.circle)
                 }
             }
+            .chartYScale(
+                domain: volumes.min()!*0.9 ... volumes.max()!*1.1)
         }
     }
 }
