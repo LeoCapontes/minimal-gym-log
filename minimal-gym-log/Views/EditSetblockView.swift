@@ -146,7 +146,7 @@ struct PreviousSetBlocksOverview: View {
     @AppStorage("MassUnitPreference") var unitPreference: MassUnits = .kilogram
     
     var setBlocksOfSelectedExercise: [SetBlock] {
-        Array(lastSetBlocks.filter {$0.exercise == selectedExercise}.prefix(3))
+        Array(lastSetBlocks.filter {$0.exercise == selectedExercise}.suffix(4))
     }
     var body: some View {
         List{
