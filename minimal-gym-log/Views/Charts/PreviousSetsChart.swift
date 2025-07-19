@@ -15,16 +15,35 @@ struct PreviousSetsChart: View {
         setblocks.map {$0.getTotalVolume(as: massUnitPreference)}
     }
     
+    var stopPoint: CGFloat {
+        if setblocks.count < 2 {return CGFloat(0)}
+        return CGFloat(CGFloat(setblocks.count - 2) / CGFloat(setblocks.count-1))
+    }
+    
     var body: some View {
         VStack(alignment: .leading){
             Text("Volume (\(massUnitPreference.rawValue))")
             Chart{
-                ForEach(setblocks, id: \.date) { setblock in
+                ForEach(setblocks, id: \.self) { setblock in
                     LineMark(
                         x: .value("Date", setblock.date.formatted(date: .numeric, time: .omitted)),
                         y: .value("Volume", setblock.getTotalVolume(as: massUnitPreference))
                     )
                     .symbol(.circle)
+                    .foregroundStyle(
+                        .linearGradient(
+                            Gradient(
+                                stops: [
+                                    .init(color: .gray, location:0),
+                                    .init(color: .gray, location: stopPoint),
+                                    .init(color: .blue, location: stopPoint+0.01),
+                                    .init(color: .blue, location:1),
+                                ]
+                            ),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
                 }
             }
             .chartYScale(
