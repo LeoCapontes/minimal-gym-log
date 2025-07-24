@@ -53,22 +53,8 @@ struct PreviousSetsChart: View {
 }
 
 #Preview {
-    let mock = [
-        SetBlock(
-            exercise: Exercise(name: "Dumbbell curl", bodyPart: .bicep),
-            sets: [Set(reps: 8, weight: 9), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), ],
-            date: Date().advanced(by: -86400*2)
-        ),
-        SetBlock(
-            exercise: Exercise(name: "Dumbbell curl", bodyPart: .bicep),
-            sets: [Set(reps: 8, weight: 10), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
-            date: Date().advanced(by: -86400)
-        ),
-        SetBlock(
-            exercise: Exercise(name: "Dumbbell curl", bodyPart: .bicep),
-            sets: [Set(reps: 8, weight: 11), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
-            date: Date()
-        )]
+    let exercise = Exercise(name: "Bicep Curl", bodyPart: .bicep)
+    let mock = generateMockSetblocks(quantity: 6, exercise: exercise)
     
     PreviousSetsChart(setblocks: mock)
         .frame(height: 150)
