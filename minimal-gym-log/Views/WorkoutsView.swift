@@ -52,10 +52,9 @@ struct WorkoutsView: View {
                     }
                 }
             }
-            .navigationDestination(
-                for: SetBlock.self){ setblock in
+            .navigationDestination(for: SetBlock.self){ setblock in
                     EditSetblockView.init(setblock: setblock, exercises: exercises)
-                }
+            }
             .navigationTitle("GymLog")
             .toolbar{
                 Button("Add Sets", action: addSetBlock)
