@@ -27,13 +27,18 @@ struct EditExercisesView: View {
                 ForEach(exerciseHeaders, id: \.self) { exerciseGroup in
                     Section(exerciseGroup.rawValue){
                         ForEach(groupedByBodyPart[exerciseGroup]!, id: \.self) { exercise in
-                            Text(exercise.name)
+                            NavigationLink(value: exercise) {
+                                Text(exercise.name)
+                            }
                         }
                         .onDelete { indexSet in
                             deleteExercise(indexSet, for: exerciseGroup)
                         }
                     }
                 }
+            }
+            .navigationDestination(for: Exercise.self) { exercise in
+                ExerciseProgressScreen.init(exercise: exercise)
             }
             .navigationTitle(Text("Exercises"))
             .toolbar {
