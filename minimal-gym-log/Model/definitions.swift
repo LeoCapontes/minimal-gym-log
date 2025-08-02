@@ -29,11 +29,20 @@ class Exercise{
     var name: String
     var bodyPart: BodyPart
     var bodyWeightExercise: Bool
+    // for bodyweight exercise volume calculation
+    var effectiveLoad: Double = 1
     
     init(name: String, bodyPart: BodyPart, isBodyWeight: Bool = false) {
         self.name = name
         self.bodyPart = bodyPart
         self.bodyWeightExercise = isBodyWeight
+    }
+    
+    init(name: String, bodyPart: BodyPart, isBodyWeight: Bool = false, effectiveLoad: Double) {
+        self.name = name
+        self.bodyPart = bodyPart
+        self.bodyWeightExercise = isBodyWeight
+        self.effectiveLoad = effectiveLoad
     }
 }
 
