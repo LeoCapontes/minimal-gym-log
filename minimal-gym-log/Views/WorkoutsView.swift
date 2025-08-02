@@ -63,7 +63,7 @@ struct WorkoutsView: View {
     }
     
     func deleteSets(_ indexSet: IndexSet, for date: Date) {
-        guard let setblocksForDate = groupedByDate[date] else { return }
+        guard let setblocksForDate = groupedByDateSorted[date] else { return }
         for index in indexSet {
             let exerciseSet = setblocksForDate[index]
             modelContext.delete(exerciseSet)
