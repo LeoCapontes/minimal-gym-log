@@ -21,13 +21,16 @@ struct AllSetsChart: View {
         setblocks.sorted(by: {$0.date < $1.date})
     }
     
+    var dateFormat = Date.FormatStyle().year(.twoDigits).month(.twoDigits).day(.twoDigits)
+    
     var body: some View {
         VStack(alignment: .leading){
             Text("Volume per workout(\(massUnitPreference.rawValue))")
             Chart{
                 ForEach(entriesByDate, id: \.self) { setblock in
                     LineMark(
-                        x: .value("Date", setblock.date.formatted(date: .numeric, time: .omitted)),
+                        x: .value("Date", setblock.date.formatted(dateFormat)
+                        ),
                         y: .value("Volume", setblock.getTotalVolume(as: massUnitPreference))
                     )
                     .symbol(.circle)
@@ -35,7 +38,7 @@ struct AllSetsChart: View {
             }
             .chartYScale(
                 domain: volumes.min()!*0.9 ... volumes.max()!*1.1)
-            .chartXVisibleDomain(length: 10)
+            .chartXVisibleDomain(length: (entriesByDate.count > 10 ? 10 : entriesByDate.count))
             .chartScrollableAxes(.horizontal)
             .chartScrollPosition(initialX: Date())
         }

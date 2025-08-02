@@ -10,6 +10,7 @@ import SwiftData
 
 struct ExerciseProgressScreen: View {
     var exercise: Exercise
+    @AppStorage("MassUnitPreference") var unitPreference: MassUnits = .kilogram
     @Query(sort: [SortDescriptor(\SetBlock.date)]) var lastSetBlocks: [SetBlock]
     
     var setBlocksOfSelectedExercise: [SetBlock] {
@@ -19,6 +20,19 @@ struct ExerciseProgressScreen: View {
     var body: some View {
         Form {
             AllSetsChart(exercise: exercise, setblocks: setBlocksOfSelectedExercise)
+            Section(header: Text("History")) {
+                List{
+                    ForEach(setBlocksOfSelectedExercise, id: \.self){ setblock in
+                        VStack(alignment: .leading){
+                            Text(
+                                setblock.date.formatted(date: .complete, time: .omitted)
+                            ).font(.headline)
+                            Text(setblock.asString(unitPreference: unitPreference))
+                                .font(.subheadline)
+                        }
+                    }
+                }
+            }
         }
         .navigationTitle("\(exercise.name) Progress")
         .navigationBarTitleDisplayMode(.inline)
