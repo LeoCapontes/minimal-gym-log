@@ -34,7 +34,6 @@ struct EditSetblockView: View {
                 header: Text("Sets"),
                 footer: Text("Total volume: \(totalVolume())\(massUnitPreference.rawValue)")
             ) {
-                Button("Add set", action: addSet)
                 List{
                     ForEach($setblock.sets) { setBlockSet in
                         HStack{
@@ -58,6 +57,25 @@ struct EditSetblockView: View {
                     }
                     .onDelete(perform: deleteSets)
                 }
+                Button() {
+                    withAnimation() {
+                        addSet()
+                    }
+                } label: {
+                    HStack(alignment: .center){
+                        Spacer()
+                        Label{
+                            Text("Add Set")
+                        } icon:
+                        {
+                            Image(systemName: "plus.circle").foregroundStyle(.primary).padding()
+                        }
+                        .padding(4)
+                        Spacer()
+                    }
+                }
+                .buttonStyle(.bordered)
+                
             }
             Section("Previous Sets") {
                 PreviousSetBlocksOverview(selectedExercise: $setblock.exercise)
@@ -69,7 +87,13 @@ struct EditSetblockView: View {
     }
     
     func addSet(){
-        setblock.sets.append(Set(reps: 0, weight: 0))
+        // new set is copy of previous set
+        if (!setblock.sets.isEmpty){
+            let lastSet = setblock.sets.last
+            setblock.sets.append(Set(reps: lastSet!.reps!, weight: lastSet!.weightKg!))
+        } else {
+            setblock.sets.append(Set(reps: 0, weight: 0))
+        }
     }
     
     func deleteSets(_ indexSet: IndexSet){
