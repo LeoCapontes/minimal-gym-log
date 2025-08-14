@@ -11,7 +11,7 @@ import SwiftData
 struct ExerciseProgressScreen: View {
     var exercise: Exercise
     @AppStorage("MassUnitPreference") var unitPreference: MassUnits = .kilogram
-    @Query(sort: [SortDescriptor(\SetBlock.date)]) var lastSetBlocks: [SetBlock]
+    @Query(sort: \SetBlock.date, order: .reverse) var lastSetBlocks: [SetBlock]
     
     var setBlocksOfSelectedExercise: [SetBlock] {
         Array(lastSetBlocks.filter {$0.exercise == exercise})
