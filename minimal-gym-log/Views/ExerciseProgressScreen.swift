@@ -21,6 +21,7 @@ struct ExerciseProgressScreen: View {
         Form {
             if (!setBlocksOfSelectedExercise.isEmpty){
                 AllSetsChart(exercise: exercise, setblocks: setBlocksOfSelectedExercise)
+                    .frame(height: 200)
                 Section(header: Text("History")) {
                     List{
                         ForEach(setBlocksOfSelectedExercise, id: \.self){ setblock in

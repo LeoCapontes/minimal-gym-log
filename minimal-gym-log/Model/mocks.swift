@@ -12,7 +12,7 @@ func generateMockSetblocks(quantity: Int, exercise: Exercise) -> [SetBlock] {
         setblocks.append(
             SetBlock(
                 exercise: exercise,
-                sets: [Set(reps: 8+i, weight: 9), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
+                sets: [Set(reps: 8+i, weight: Double(9+i)), Set(reps: 8, weight: 10), Set(reps: 8, weight: 10)],
                 date: Date().advanced(by: -86400*Double(i))
             )
         )
