@@ -19,19 +19,23 @@ struct ExerciseProgressScreen: View {
     
     var body: some View {
         Form {
-            AllSetsChart(exercise: exercise, setblocks: setBlocksOfSelectedExercise)
-            Section(header: Text("History")) {
-                List{
-                    ForEach(setBlocksOfSelectedExercise, id: \.self){ setblock in
-                        VStack(alignment: .leading){
-                            Text(
-                                setblock.date.formatted(date: .complete, time: .omitted)
-                            ).font(.headline)
-                            Text(setblock.asString(unitPreference: unitPreference))
-                                .font(.subheadline)
+            if (!setBlocksOfSelectedExercise.isEmpty){
+                AllSetsChart(exercise: exercise, setblocks: setBlocksOfSelectedExercise)
+                Section(header: Text("History")) {
+                    List{
+                        ForEach(setBlocksOfSelectedExercise, id: \.self){ setblock in
+                            VStack(alignment: .leading){
+                                Text(
+                                    setblock.date.formatted(date: .complete, time: .omitted)
+                                ).font(.headline)
+                                Text(setblock.asString(unitPreference: unitPreference))
+                                    .font(.subheadline)
+                            }
                         }
                     }
                 }
+            } else {
+                Text("No recorded sets for this exercise")
             }
         }
         .navigationTitle("\(exercise.name) Progress")
