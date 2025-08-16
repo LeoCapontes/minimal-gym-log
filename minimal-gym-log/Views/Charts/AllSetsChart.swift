@@ -10,6 +10,7 @@ import Charts
 
 struct AllSetsChart: View {
     @AppStorage("MassUnitPreference") var massUnitPreference: MassUnits = .kilogram
+    @State var showingWeights: Bool = false
     var exercise: Exercise
     var setblocks: [SetBlock]
     
@@ -25,6 +26,7 @@ struct AllSetsChart: View {
     
     var body: some View {
         VStack(alignment: .leading){
+            Toggle("Show weights", isOn: $showingWeights)
             let strideBy: Double = 4
 
             let volumesMin = volumes.min()!
@@ -37,45 +39,56 @@ struct AllSetsChart: View {
             Text("Volume per workout(\(massUnitPreference.rawValue))")
             Chart(entriesByDate) { setblock in
                 LineMark(
-                    x: .value("Date", setblock.date.formatted(dateFormat)
+                    x: .value("Date", setblock.date
                     ),
                     y: .value("Volume", (setblock.getTotalVolume(as: massUnitPreference) - volumesMin) / (volumesMax-volumesMin))
                 )
                 .foregroundStyle(by: .value("Value", "Volume"))
+                .interpolationMethod(.monotone)
                 .symbol(.circle)
                 
-                LineMark(
-                    x: .value("Date", setblock.date.formatted(dateFormat)
-                    ),
-                    y: .value("Volume", (setblock.getMeanWeight(as: massUnitPreference) - meanWeightsMin) / (meanWeightsMax-meanWeightsMin))
-                )
-                .foregroundStyle(by: .value("Value", "Mean Weight"))
-                .symbol(.circle)
+                if(showingWeights){
+                    LineMark(
+                        x: .value("Date", setblock.date
+                                 ),
+                        y: .value("Volume", (setblock.getMeanWeight(as: massUnitPreference) - meanWeightsMin) / (meanWeightsMax-meanWeightsMin))
+                    )
+                    .foregroundStyle(by: .value("Value", "Mean Weight"))
+                    .interpolationMethod(.monotone)
+                    .symbol(.cross)
+                }
                 
             }
             .chartYScale(
                 domain: -0.2 ... 1.2)
+            .chartXScale(
+                domain: entriesByDate.first!.date.advanced(by: -86400*7) ... entriesByDate.last!.date.advanced(by: 86400*14)
+            )
+            .animation(.default, value: showingWeights)
             .chartYAxis {
-                var defaultStride = Array(stride(from: 0, to: 1, by: 1.0/strideBy))
-                let meanWeightsStride = Array(stride(from: meanWeightsMin,
-                                               through: meanWeightsMax,
-                                               by: (meanWeightsMax - meanWeightsMin)/strideBy))
-                AxisMarks(position: .trailing, values: defaultStride) { axis in
-                    AxisGridLine()
-                    let value = meanWeightsStride[axis.index]
-                    AxisValueLabel("\(String(format: "%.2F", value)) kg", centered: false)
-                }
+                let defaultStride = Array(stride(from: 0, to: 1, by: 1.0/strideBy))
 
                 let volumesStride = Array(stride(from: volumesMin,
                                                      through: volumesMax,
                                                      by: (volumesMax - volumesMin)/strideBy))
-                AxisMarks(position: .leading, values: defaultStride) { axis in
+                AxisMarks(preset: .inset, position: .trailing, values: defaultStride) { axis in
                     AxisGridLine()
                     let value = volumesStride[axis.index]
                     AxisValueLabel("\(String(format: "%.1F", value)) kg", centered: false)
                 }
+                
+                if(showingWeights){
+                    let meanWeightsStride = Array(stride(from: meanWeightsMin,
+                                                         through: meanWeightsMax,
+                                                         by: (meanWeightsMax - meanWeightsMin)/strideBy))
+                    AxisMarks(preset: .inset, position: .leading, values: defaultStride) { axis in
+                        AxisGridLine()
+                        let value = meanWeightsStride[axis.index]
+                        AxisValueLabel("\(String(format: "%.2F", value)) kg", centered: false)
+                    }
+                }
             }
-            .chartXVisibleDomain(length: (entriesByDate.count > 6 ? 6 : entriesByDate.count))
+            .chartXVisibleDomain(length: 86400 * 52)
             .chartScrollableAxes(.horizontal)
             .chartScrollPosition(initialX: Date())
         }

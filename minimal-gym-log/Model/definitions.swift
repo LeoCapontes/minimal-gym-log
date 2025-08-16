@@ -127,6 +127,21 @@ class SetBlock {
         self.date = date
     }
     
+    func getMeanWeight(as unit: MassUnits) -> Double {
+        if ( self.sets.map { $0.weightKg }.contains(where: { $0 == nil })) { return 0.0 }
+        
+        let weights = self.sets.map { $0.weightKg! }
+        let sumWeightKg: Double = Double(weights.reduce(0, +))
+        let meanWeightKg = sumWeightKg / Double(weights.count)
+        
+        switch unit{
+        case .kilogram: return meanWeightKg
+        case .pound:
+            let kg = Measurement<UnitMass>(value: meanWeightKg, unit: .kilograms)
+            return kg.converted(to: .pounds).value
+        }
+    }
+    
     func getTotalVolume(as unit: MassUnits) -> Double {
         var volumeKg: Double = 0
         for s in self.sets {
