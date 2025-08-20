@@ -15,6 +15,7 @@ struct EditSetblockView: View {
     @Bindable var setblock: SetBlock
     var exercises: [Exercise]
     @State var selectedExercise: Exercise?
+    @Query(sort: \UserBodyWeight.date) var bodyWeights: [UserBodyWeight]
     
     init(setblock: SetBlock, exercises: [Exercise]) {
         self.setblock = setblock
@@ -106,8 +107,15 @@ struct EditSetblockView: View {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 2
-        
-        return formatter.string(from: NSNumber(value: setblock.getTotalVolume(as: massUnitPreference)))!
+        if (!setblock.exercise.bodyWeightExercise){
+            return formatter.string(
+                from: NSNumber(value: setblock.getTotalVolume(as: massUnitPreference))
+            )!
+        } else {
+            return formatter.string(
+                from: NSNumber(value: setblock.getTotalVolume(as: massUnitPreference, using: bodyWeights))
+            )!
+        }
     }
 }
 

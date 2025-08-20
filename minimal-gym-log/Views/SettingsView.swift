@@ -40,4 +40,11 @@ enum MassUnits: String, CaseIterable, Codable, Identifiable {
          pound = "lb"
     
     var id: String {rawValue}
+    
+    var asUnitMass: UnitMass {
+        switch(self){
+        case .kilogram: return UnitMass.kilograms
+        case .pound: return UnitMass.pounds
+        }
+    }
 }

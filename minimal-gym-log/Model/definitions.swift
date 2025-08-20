@@ -143,6 +143,9 @@ class SetBlock {
     }
     
     func getTotalVolume(as unit: MassUnits) -> Double {
+        // placeholder return
+        if(exercise.bodyWeightExercise) { return 1 }
+        
         var volumeKg: Double = 0
         for s in self.sets {
             volumeKg += (Double(s.reps ?? 0) * (s.weightKg ?? 0))
@@ -201,3 +204,35 @@ class SetBlock {
         }
     }
 }
+
+extension SetBlock {
+    func bodyWeightAtSetblockDate(from bodyWeights: [UserBodyWeight]) -> UserBodyWeight? {
+        if(bodyWeights.isEmpty) { return nil }
+        let bodyweightsBeforeSets = bodyWeights.filter({$0.date < self.date})
+        if !bodyweightsBeforeSets.isEmpty {
+            let sorted = bodyweightsBeforeSets.sorted(by: { $0.date > $1.date })
+            return sorted.first
+        } else {
+            return nil
+        }
+    }
+    
+    // for bodyweight exercises
+    func getTotalVolume(as unit: MassUnits, using bodyweights: [UserBodyWeight]) -> Double {
+        var volumeKg: Double = 0
+        if let closestBodyWeight = self.bodyWeightAtSetblockDate(from: bodyweights){
+            let effectiveBodyWeightKg = closestBodyWeight.valueAsKg * exercise.effectiveLoad
+            for s in self.sets {
+                volumeKg += (Double(s.reps ?? 0) * ((s.weightKg ?? 0) + effectiveBodyWeightKg))
+            }
+            switch unit{
+            case .kilogram: return volumeKg
+            case .pound:
+                let kg = Measurement<UnitMass>(value: volumeKg, unit: .kilograms)
+                return kg.converted(to: .pounds).value
+            }
+        } else { return 1 }
+    }
+}
+
+
