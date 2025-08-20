@@ -14,10 +14,19 @@ struct SettingsView: View {
         NavigationStack{
             Form{
                 Section("Units"){
-                    Picker("", selection: $massUnitPreference){
+                    Picker("Weight Units", selection: $massUnitPreference){
                         ForEach(MassUnits.allCases) { unit in
                             Text(unit.rawValue)
                                 .tag(unit)
+                        }
+                    }
+                }
+                Section("Measurements"){
+                    List{
+                        NavigationLink{
+                            BodyWeightHistoryView()
+                        } label: {
+                            Text("Body Weight")
                         }
                     }
                 }

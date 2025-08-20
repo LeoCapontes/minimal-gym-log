@@ -14,8 +14,14 @@ struct minimal_gym_logApp: App {
     
     init() {
         do{
-            let config = ModelConfiguration(for: SetBlock.self, Exercise.self)
-            container = try ModelContainer(for: SetBlock.self, Exercise.self, configurations: config)
+            let config = ModelConfiguration(
+                for: SetBlock.self, Exercise.self, UserBodyWeight.self
+            )
+            
+            container = try ModelContainer(
+                for: SetBlock.self, Exercise.self, UserBodyWeight.self,
+                configurations: config
+            )
         } catch {
             fatalError("Failed to configure SwiftData container.")
         }
