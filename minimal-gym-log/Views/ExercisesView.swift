@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct EditExercisesView: View {
+struct ExercisesView: View {
     @Environment(\.modelContext) var modelContext
     @Query var exercises: [Exercise]
     @State private var showingAddExerciseView = false
@@ -29,6 +29,13 @@ struct EditExercisesView: View {
                         ForEach(groupedByBodyPart[exerciseGroup]!, id: \.self) { exercise in
                             NavigationLink(value: exercise) {
                                 Text(exercise.name)
+                            }
+                            .swipeActions(allowsFullSwipe: false){
+                                NavigationLink {
+                                    EditExerciseView(exercise: exercise)
+                                } label: {
+                                    Label("Edit", systemImage: "pencil")
+                                }
                             }
                         }
                         .onDelete { indexSet in
@@ -65,6 +72,24 @@ struct EditExercisesView: View {
         for index in indexSet {
             let exerciseSet = exercisesForBodyPart[index]
             modelContext.delete(exerciseSet)
+        }
+    }
+}
+
+struct EditExerciseView: View {
+    @Bindable var exercise: Exercise
+    
+    var body: some View {
+        Form{
+            if(exercise.bodyWeightExercise) {
+                Section("Body weight options"){
+                    TextField(
+                        "Effective Load",
+                        value: $exercise.effectiveLoad,
+                        format: .number
+                    )
+                }
+            }
         }
     }
 }

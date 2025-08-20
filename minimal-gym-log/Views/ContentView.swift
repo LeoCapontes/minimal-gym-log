@@ -20,7 +20,7 @@ struct ContentView: View {
                 .tabItem{
                     Label("Workouts", systemImage: "figure.strengthtraining.traditional")
                 }
-            EditExercisesView()
+            ExercisesView()
                 .tabItem {
                     Label("Exercises", systemImage: "dumbbell")
                 }
