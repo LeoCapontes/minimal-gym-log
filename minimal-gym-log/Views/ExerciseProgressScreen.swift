@@ -12,6 +12,7 @@ struct ExerciseProgressScreen: View {
     var exercise: Exercise
     @AppStorage("MassUnitPreference") var unitPreference: MassUnits = .kilogram
     @Query(sort: \SetBlock.date, order: .reverse) var lastSetBlocks: [SetBlock]
+    @Query(sort: \UserBodyWeight.date) var bodyWeights: [UserBodyWeight]
     
     var setBlocksOfSelectedExercise: [SetBlock] {
         Array(lastSetBlocks.filter {$0.exercise == exercise})
@@ -20,7 +21,11 @@ struct ExerciseProgressScreen: View {
     var body: some View {
         Form {
             if (!setBlocksOfSelectedExercise.isEmpty){
-                AllSetsChart(exercise: exercise, setblocks: setBlocksOfSelectedExercise)
+                AllSetsChart(
+                    exercise: exercise,
+                    setblocks: setBlocksOfSelectedExercise,
+                    bodyWeights: bodyWeights
+                )
                     .frame(height: 350)
                 Section(header: Text("History")) {
                     List{

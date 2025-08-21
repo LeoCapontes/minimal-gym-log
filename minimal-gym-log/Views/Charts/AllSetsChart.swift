@@ -13,9 +13,14 @@ struct AllSetsChart: View {
     @State var showingWeights: Bool = false
     var exercise: Exercise
     var setblocks: [SetBlock]
+    var bodyWeights: [UserBodyWeight]
     
     var volumes: [Double] {
-        setblocks.map {$0.getTotalVolume(as: massUnitPreference)}
+        if (exercise.bodyWeightExercise) {
+            return setblocks.map {$0.getTotalVolume(as: massUnitPreference, using: bodyWeights)}
+        } else{
+            return setblocks.map {$0.getTotalVolume(as: massUnitPreference)}
+        }
     }
     
     var entriesByDate: [SetBlock] {
@@ -32,32 +37,33 @@ struct AllSetsChart: View {
             let volumesMin = volumes.min()!
             let volumesMax = volumes.max()!
 
-            let meanWeights = setblocks.map { $0.getMeanWeight(as: massUnitPreference) }
-            let meanWeightsMin = meanWeights.min()!
-            let meanWeightsMax = meanWeights.max()!
+            let meanWeights = getMeanWeights()
+            let (meanWeightsMin, meanWeightsMax) = getPaddedBounds(meanWeights)
             
             Text("Volume per workout(\(massUnitPreference.rawValue))")
             Chart(entriesByDate) { setblock in
                 LineMark(
-                    x: .value("Date", setblock.date
-                    ),
-                    y: .value("Volume", (setblock.getTotalVolume(as: massUnitPreference) - volumesMin) / (volumesMax-volumesMin))
+                    x: .value("Date", setblock.date),
+                    y: .value("Volume", ((setblock.exercise.bodyWeightExercise ?
+                                         setblock.getTotalVolume(as: massUnitPreference, using: bodyWeights) :
+                                         setblock.getTotalVolume(as: massUnitPreference)) - volumesMin) / (volumesMax-volumesMin))
                 )
                 .foregroundStyle(by: .value("Value", "Volume"))
                 .interpolationMethod(.monotone)
                 .symbol(.circle)
                 
                 if(showingWeights){
+                    let meanWeight = (setblock.exercise.bodyWeightExercise ?
+                                      setblock.bodyWeightAtSetblockDate(from: bodyWeights)!.getWeight(as: massUnitPreference.asUnitMass) :
+                                       setblock.getMeanWeight(as: massUnitPreference))
                     LineMark(
-                        x: .value("Date", setblock.date
-                                 ),
-                        y: .value("Volume", (setblock.getMeanWeight(as: massUnitPreference) - meanWeightsMin) / (meanWeightsMax-meanWeightsMin))
+                        x: .value("Date", setblock.date),
+                        y: .value("Mean Weight", ( meanWeight - meanWeightsMin) / (meanWeightsMax-meanWeightsMin))
                     )
                     .foregroundStyle(by: .value("Value", "Mean Weight"))
                     .interpolationMethod(.monotone)
                     .symbol(.cross)
                 }
-                
             }
             .chartYScale(
                 domain: -0.2 ... 1.2)
@@ -78,13 +84,20 @@ struct AllSetsChart: View {
                 }
                 
                 if(showingWeights){
-                    let meanWeightsStride = Array(stride(from: meanWeightsMin,
-                                                         through: meanWeightsMax,
-                                                         by: (meanWeightsMax - meanWeightsMin)/strideBy))
-                    AxisMarks(preset: .inset, position: .leading, values: defaultStride) { axis in
-                        AxisGridLine()
-                        let value = meanWeightsStride[axis.index]
-                        AxisValueLabel("\(String(format: "%.2F", value)) kg", centered: false)
+                    if (meanWeightsMin == meanWeightsMax) {
+                        AxisMarks(preset: .inset, position: .leading){
+                            AxisValueLabel("\(String(format: "%.2F", meanWeightsMin)) kg", centered: false)
+                        }
+                    }
+                    else {
+                        let meanWeightsStride = Array(stride(from: meanWeightsMin,
+                                                             through: meanWeightsMax,
+                                                             by: (meanWeightsMax - meanWeightsMin)/strideBy))
+                        AxisMarks(preset: .inset, position: .leading, values: defaultStride) { axis in
+                            AxisGridLine()
+                            let value = meanWeightsStride[axis.index]
+                            AxisValueLabel("\(String(format: "%.2F", value)) kg", centered: false)
+                        }
                     }
                 }
             }
@@ -93,13 +106,33 @@ struct AllSetsChart: View {
             .chartScrollPosition(initialX: Date())
         }
     }
+    
+    func getPaddedBounds(_ weights: [Double]) -> (lower: Double, upper: Double) {
+        if(weights.min() == weights.max()){
+            return (weights.first!-1, weights.first!+1)
+        }
+        let lower = weights.min()!
+        let upper = weights.max()!
+        return (lower, upper)
+    }
+    
+    func getMeanWeights() -> [Double] {
+        if exercise.bodyWeightExercise{
+            return setblocks.map{
+                $0.bodyWeightAtSetblockDate(from: bodyWeights)!.getWeight(as: massUnitPreference.asUnitMass)
+            }
+        }else {
+            return setblocks.map { $0.getMeanWeight(as: massUnitPreference) }
+        }
+    }
 }
 
 
 #Preview {
     let exercise = Exercise(name: "Dumbbell curl", bodyPart: .bicep)
     let mock = generateMockSetblocks(quantity: 30, exercise: exercise)
+    let mockWeights = generateMockUserBodyWeights(quantity: 30)
     
-    AllSetsChart(exercise: mock[0].exercise, setblocks: mock)
+    AllSetsChart(exercise: mock[0].exercise, setblocks: mock, bodyWeights: mockWeights)
         .frame(height: 150)
 }
