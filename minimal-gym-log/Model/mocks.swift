@@ -19,3 +19,17 @@ func generateMockSetblocks(quantity: Int, exercise: Exercise) -> [SetBlock] {
     }
     return setblocks
 }
+
+func generateMockUserBodyWeights(quantity: Int) -> [UserBodyWeight] {
+    var weights = [UserBodyWeight]()
+    for i in (0..<quantity) {
+        weights.append(
+            UserBodyWeight(
+                value: Double(70 + i),
+                date: Date().advanced(by: -86400*Double(i)),
+                as: .kilograms
+            )
+        )
+    }
+    return weights
+}

@@ -10,9 +10,14 @@ import Charts
 struct PreviousSetsChart: View {
     @AppStorage("MassUnitPreference") var massUnitPreference: MassUnits = .kilogram
     var setblocks: [SetBlock]
+    var bodyWeights: [UserBodyWeight]
     
     var volumes: [Double] {
-        setblocks.map {$0.getTotalVolume(as: massUnitPreference)}
+        if setblocks.first!.exercise.bodyWeightExercise {
+            return setblocks.map {$0.getTotalVolume(as: massUnitPreference, using: bodyWeights)}
+        } else {
+            return setblocks.map {$0.getTotalVolume(as: massUnitPreference)}
+        }
     }
     
     var stopPoint: CGFloat {
@@ -27,7 +32,12 @@ struct PreviousSetsChart: View {
                 ForEach(setblocks, id: \.self) { setblock in
                     LineMark(
                         x: .value("Date", setblock.date.formatted(date: .numeric, time: .omitted)),
-                        y: .value("Volume", setblock.getTotalVolume(as: massUnitPreference))
+                        y: .value(
+                            "Volume",
+                            setblock.exercise.bodyWeightExercise ?
+                                setblock.getTotalVolume(as: massUnitPreference, using: bodyWeights) :
+                                setblock.getTotalVolume(as: massUnitPreference)
+                        )
                     )
                     .symbol(.circle)
                     .foregroundStyle(
@@ -55,7 +65,8 @@ struct PreviousSetsChart: View {
 #Preview {
     let exercise = Exercise(name: "Bicep Curl", bodyPart: .bicep)
     let mock = generateMockSetblocks(quantity: 6, exercise: exercise)
+    let mockWeights = generateMockUserBodyWeights(quantity: 6)
     
-    PreviousSetsChart(setblocks: mock)
+    PreviousSetsChart(setblocks: mock, bodyWeights: mockWeights)
         .frame(height: 150)
 }

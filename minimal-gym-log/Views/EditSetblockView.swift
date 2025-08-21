@@ -175,6 +175,7 @@ struct WeightEntry: View {
 struct PreviousSetBlocksOverview: View {
     @Binding var selectedExercise: Exercise
     @Query(sort: [SortDescriptor(\SetBlock.date)]) var lastSetBlocks: [SetBlock]
+    @Query(sort: \UserBodyWeight.date) var bodyWeights: [UserBodyWeight]
     @AppStorage("MassUnitPreference") var unitPreference: MassUnits = .kilogram
     
     var setBlocksOfSelectedExercise: [SetBlock] {
@@ -182,7 +183,7 @@ struct PreviousSetBlocksOverview: View {
     }
     var body: some View {
         List{
-            PreviousSetsChart(setblocks: setBlocksOfSelectedExercise)
+            PreviousSetsChart(setblocks: setBlocksOfSelectedExercise, bodyWeights: bodyWeights)
             ForEach(setBlocksOfSelectedExercise.reversed()) { setblock in
                 HStack(alignment: .top){
                     Text(setblock.date.formatted(date: .numeric, time: .omitted))
