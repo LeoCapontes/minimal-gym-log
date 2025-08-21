@@ -213,7 +213,10 @@ extension SetBlock {
             let sorted = bodyweightsBeforeSets.sorted(by: { $0.date > $1.date })
             return sorted.first
         } else {
-            return nil
+            print("using weight after date for volume")
+            let bodyweightsBeforeSets = bodyWeights.filter({$0.date > self.date})
+            let sorted = bodyweightsBeforeSets.sorted(by: { $0.date > $1.date })
+            return sorted.first
         }
     }
     
