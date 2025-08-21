@@ -41,10 +41,21 @@ struct BodyWeightHistoryView: View {
                                 )
                             }
                         }
+                        .swipeActions(allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                deleteEntry(entry)
+                            } label: {
+                                Label("Delete", systemImage: "trash.fill")
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+    
+    func deleteEntry(_ entry: UserBodyWeight) {
+        modelContext.delete(entry)
     }
     
     func addEntry(value: Double, date: Date) {
