@@ -31,15 +31,18 @@ struct ExercisesView: View {
                                 Text(exercise.name)
                             }
                             .swipeActions(allowsFullSwipe: false){
+                                Button(role: .destructive) {
+                                    deleteEntry(exercise)
+                                } label : {
+                                    Label("Delete", systemImage: "trash.fill")
+                                }
+                                
                                 NavigationLink {
                                     EditExerciseView(exercise: exercise)
                                 } label: {
                                     Label("Edit", systemImage: "pencil")
                                 }
                             }
-                        }
-                        .onDelete { indexSet in
-                            deleteExercise(indexSet, for: exerciseGroup)
                         }
                     }
                 }
@@ -65,6 +68,10 @@ struct ExercisesView: View {
         } catch {
             print("couldn't save")
         }
+    }
+    
+    func deleteEntry(_ entry: Exercise) {
+        modelContext.delete(entry)
     }
     
     func deleteExercise(_ indexSet: IndexSet, for bodyPart: Exercise.BodyPart) {
