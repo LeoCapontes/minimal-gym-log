@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B3C367682E6B10A200F45119 /* gymlog_icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = B3C367672E6B10A200F45119 /* gymlog_icon.icon */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		B37985712DB3D4B700FEFAF7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +31,7 @@
 		B37985632DB3D4B500FEFAF7 /* minimal-gym-log.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "minimal-gym-log.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37985702DB3D4B700FEFAF7 /* minimal-gym-logTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "minimal-gym-logTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B379857A2DB3D4B700FEFAF7 /* minimal-gym-logUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "minimal-gym-logUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C367672E6B10A200F45119 /* gymlog_icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = gymlog_icon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -79,6 +84,7 @@
 				B37985732DB3D4B700FEFAF7 /* minimal-gym-logTests */,
 				B379857D2DB3D4B700FEFAF7 /* minimal-gym-logUITests */,
 				B37985642DB3D4B500FEFAF7 /* Products */,
+				B3C367672E6B10A200F45119 /* gymlog_icon.icon */,
 			);
 			sourceTree = "<group>";
 		};
@@ -212,6 +218,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C367682E6B10A200F45119 /* gymlog_icon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,7 +402,7 @@
 		B37985852DB3D4B700FEFAF7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = gymlog_icon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -423,7 +430,7 @@
 		B37985862DB3D4B700FEFAF7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = gymlog_icon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
