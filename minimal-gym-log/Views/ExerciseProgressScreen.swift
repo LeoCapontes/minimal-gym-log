@@ -20,13 +20,15 @@ struct ExerciseProgressScreen: View {
     
     var body: some View {
         Form {
-            if (!setBlocksOfSelectedExercise.isEmpty){
-                AllSetsChart(
-                    exercise: exercise,
-                    setblocks: setBlocksOfSelectedExercise,
-                    bodyWeights: bodyWeights
-                )
+            if(!setBlocksOfSelectedExercise.isEmpty){
+                if (!(setBlocksOfSelectedExercise.count < 2)){
+                    AllSetsChart(
+                        exercise: exercise,
+                        setblocks: setBlocksOfSelectedExercise,
+                        bodyWeights: bodyWeights
+                    )
                     .frame(height: 350)
+                }
                 Section(header: Text("History")) {
                     List{
                         ForEach(setBlocksOfSelectedExercise, id: \.self){ setblock in
@@ -41,7 +43,7 @@ struct ExerciseProgressScreen: View {
                     }
                 }
             } else {
-                Text("No recorded sets for this exercise")
+                Text("No sets recorded for this exercise")
             }
         }
         .navigationTitle("\(exercise.name) Progress")
