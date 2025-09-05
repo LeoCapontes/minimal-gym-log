@@ -60,8 +60,8 @@ struct ExercisesView: View {
         }
     }
     
-    func addExercise(name: String, bodyPart: Exercise.BodyPart, isBodyweight: Bool) {
-        modelContext.insert(Exercise(name: name, bodyPart: bodyPart, isBodyWeight: isBodyweight))
+    func addExercise(name: String, bodyPart: Exercise.BodyPart, isBodyweight: Bool, effectiveLoad: Double) {
+        modelContext.insert(Exercise(name: name, bodyPart: bodyPart, isBodyWeight: isBodyweight, effectiveLoad: effectiveLoad))
         print("Added exercise")
         do{
             try modelContext.save()
@@ -88,13 +88,27 @@ struct EditExerciseView: View {
     
     var body: some View {
         Form{
+            Section ("General") {
+                LabeledContent{
+                    TextField(
+                        "Name",
+                        text : $exercise.name
+                    )
+                } label: {
+                    Text("Name")
+                }
+            }
             if(exercise.bodyWeightExercise) {
                 Section("Body weight options"){
-                    TextField(
-                        "Effective Load",
-                        value: $exercise.effectiveLoad,
-                        format: .number
-                    )
+                    LabeledContent{
+                        TextField(
+                            "Effective Load",
+                            value: $exercise.effectiveLoad,
+                            format: .number
+                        )
+                    } label: {
+                        Text("Effective Load")
+                    }
                 }
             }
         }
@@ -103,10 +117,13 @@ struct EditExerciseView: View {
 
 struct NewExerciseView: View {
     @Environment(\.dismiss) var dismiss
-    var addExercise: (String, Exercise.BodyPart, Bool) -> Void
+    var addExercise: (String, Exercise.BodyPart, Bool, Double) -> Void
     @State var name: String = ""
     @State var bodyPart: Exercise.BodyPart = .other
     @State var isBodyWeight: Bool = false
+    @State var effectiveLoad: Double = 1
+    
+    let effectiveLoadTip = EffectiveLoadTip()
     
     var body: some View {
         Form {
@@ -124,9 +141,22 @@ struct NewExerciseView: View {
             Section("Options"){
                 Toggle("Is this a bodyweight exercise?", isOn: $isBodyWeight)
             }
+            if(isBodyWeight) {
+                Section("Body weight options"){
+                    LabeledContent{
+                        TextField(
+                            "Effective Load",
+                            value: $effectiveLoad,
+                            format: .number
+                        )
+                    } label: {
+                        Text("Effective Load")
+                    }
+                }
+            }
         }
         Button("Add Exercise", action: {
-            addExercise(name, bodyPart, isBodyWeight)
+            addExercise(name, bodyPart, isBodyWeight, effectiveLoad)
             dismiss()
         })
     }
