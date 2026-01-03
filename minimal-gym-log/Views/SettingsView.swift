@@ -10,6 +10,10 @@ struct SettingsView: View {
     @AppStorage("MassUnitPreference")
     private var massUnitPreference: MassUnits = .kilogram
     
+    // store date as double
+    @AppStorage("StartTrackingDate")
+    private var startTrackingDate = Date()
+    
     var body: some View {
         NavigationStack{
             Form{
@@ -46,5 +50,28 @@ enum MassUnits: String, CaseIterable, Codable, Identifiable {
         case .kilogram: return UnitMass.kilograms
         case .pound: return UnitMass.pounds
         }
+    }
+}
+
+
+// from https://fatbobman.com/en/snippet/extending-supported-data-types-for-appstorage/
+// allows for better handling of dates in AppStorage
+extension Date: RawRepresentable {
+    public typealias RawValue = String
+    
+    public init?(rawValue: RawValue) {
+        guard let data = rawValue.data(using: .utf8),
+              let date = try? JSONDecoder().decode(Date.self, from: data) else {
+            return nil
+        }
+        self = date
+    }
+    
+    public var rawValue: RawValue {
+        guard let data = try? JSONEncoder().encode(self),
+              let result = String(data: data, encoding: .utf8) else {
+            return ""
+        }
+        return result
     }
 }
