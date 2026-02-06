@@ -20,7 +20,14 @@ struct EditSetblockView: View {
     
     var exercises: [Exercise]
     
+    var groupedByBodyPart: [Exercise.BodyPart: [Exercise]] {
+        Dictionary(grouping: exercises, by: { $0.bodyPart })
+    }
     
+    var exerciseHeaders: [Exercise.BodyPart]{
+        groupedByBodyPart.map({$0.key})
+    }
+
     init(setblock: SetBlock, exercises: [Exercise]) {
         self.setblock = setblock
         self.exercises = exercises
@@ -29,12 +36,19 @@ struct EditSetblockView: View {
     var body: some View {
         Form(){
             DatePicker("Date", selection: $setblock.date)
-            Picker(selection: $setblock.exercise, label: Text("Exercise")){
-                ForEach(exercises, id: \.self){ exercise in
-                    Text(exercise.name)
-                        .tag(Optional(exercise))
+            Menu {
+                ForEach(exerciseHeaders, id: \.self) { exerciseGroup in
+                    Picker(selection: $setblock.exercise, label: Text("Exercise")){
+                        ForEach(groupedByBodyPart[exerciseGroup]!, id: \.self){ exercise in
+                            Text(exercise.name)
+                                .tag(Optional(exercise))
+                        }
+                    }
                 }
+            } label: {
+                Text("Selected Exercise: \(setblock.exercise.name)")
             }
+            
             if(setblock.exercise.bodyWeightExercise && !additionalWeight) {
                 Button {
                     additionalWeight.toggle()

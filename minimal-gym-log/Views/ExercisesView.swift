@@ -123,7 +123,6 @@ struct NewExerciseView: View {
     @State var isBodyWeight: Bool = false
     @State var effectiveLoad: Double = 1
     
-    let effectiveLoadTip = EffectiveLoadTip()
     
     var body: some View {
         Form {
