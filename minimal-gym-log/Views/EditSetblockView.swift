@@ -12,10 +12,14 @@ import Combine
 struct EditSetblockView: View {
     @Environment(\.modelContext) var modelContext
     @AppStorage("MassUnitPreference") var massUnitPreference: MassUnits = .kilogram
-    @Bindable var setblock: SetBlock
-    var exercises: [Exercise]
-    @State var selectedExercise: Exercise?
     @Query(sort: \UserBodyWeight.date) var bodyWeights: [UserBodyWeight]
+    
+    @Bindable var setblock: SetBlock
+    @State var selectedExercise: Exercise?
+    @State var additionalWeight: Bool = false
+    
+    var exercises: [Exercise]
+    
     
     init(setblock: SetBlock, exercises: [Exercise]) {
         self.setblock = setblock
@@ -29,6 +33,13 @@ struct EditSetblockView: View {
                 ForEach(exercises, id: \.self){ exercise in
                     Text(exercise.name)
                         .tag(Optional(exercise))
+                }
+            }
+            if(setblock.exercise.bodyWeightExercise && !additionalWeight) {
+                Button {
+                    additionalWeight.toggle()
+                } label : {
+                    Label("Weight", systemImage: "plus")
                 }
             }
             Section(
@@ -47,12 +58,14 @@ struct EditSetblockView: View {
                             )
                             .textFieldStyle(.roundedBorder)
                             .keyboardType(.numberPad)
-                            Spacer()
-                            Text("Weight:")
-                            WeightEntry(
-                                set: setBlockSet,
-                                massUnitPreference: massUnitPreference
-                            )
+                            
+                            if(!setblock.exercise.bodyWeightExercise || additionalWeight) {
+                                Text("Weight:")
+                                WeightEntry(
+                                    set: setBlockSet,
+                                    massUnitPreference: massUnitPreference
+                                )
+                            }
                         }
                         .animation(.default.speed(2.0))
                     }

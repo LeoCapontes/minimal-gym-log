@@ -65,7 +65,7 @@ struct ContentView: View {
         modelContext.insert(
             SetBlock(
                 exercise: exercises.first ?? Exercise(name: "Dumbbell curl", bodyPart: .bicep),
-                sets: [Set(reps: 1, weight: 1)],
+                sets: [Set(reps: 0, weight: 0)],
                 date: Date()
             )
         )
