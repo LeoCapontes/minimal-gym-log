@@ -10,12 +10,34 @@ import SwiftData
 
 struct ExerciseProgressScreen: View {
     var exercise: Exercise
-    @AppStorage("MassUnitPreference") var unitPreference: MassUnits = .kilogram
-    @Query(sort: \SetBlock.date, order: .reverse) var lastSetBlocks: [SetBlock]
+    
+    @AppStorage("MassUnitPreference")
+    var unitPreference: MassUnits = .kilogram
+    
+    @AppStorage("StartTrackingDate")
+    private var startTrackingDate = Date()
+    
+    @Query var lastSetBlocks: [SetBlock]
+    
     @Query(sort: \UserBodyWeight.date) var bodyWeights: [UserBodyWeight]
     
     var setBlocksOfSelectedExercise: [SetBlock] {
         Array(lastSetBlocks.filter {$0.exercise == exercise})
+    }
+    
+    init(exercise: Exercise) {
+        self.exercise = exercise
+        
+        let startDateSetblockPredicate = #Predicate<SetBlock> {
+            $0.date > startTrackingDate
+        }
+        
+        let startDateBodyweightPredicate = #Predicate<UserBodyWeight> {
+            $0.date > startTrackingDate
+        }
+        
+        _lastSetBlocks = Query(filter: startDateSetblockPredicate, sort: \SetBlock.date, order: .reverse)
+        _bodyWeights = Query(filter: startDateBodyweightPredicate, sort: \UserBodyWeight.date)
     }
     
     var body: some View {
