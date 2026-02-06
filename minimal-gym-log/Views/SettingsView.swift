@@ -15,6 +15,11 @@ struct SettingsView: View {
     private var startTrackingDate = Date()
     
     var body: some View {
+        let startDateBinding = Binding<Date>(
+            get: { return startTrackingDate },
+            set: { startTrackingDate = $0}
+        )
+        
         NavigationStack{
             Form{
                 Section("Units"){
@@ -34,7 +39,17 @@ struct SettingsView: View {
                         }
                     }
                 }
+                Section("Start Date") {
+                    DatePicker(
+                        "Start Date",
+                        selection: startDateBinding,
+                        displayedComponents: [.date]
+                    )
+                }
             }
+        }
+        .onAppear{
+            print(startTrackingDate)
         }
     }
 }
